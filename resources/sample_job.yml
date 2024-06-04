@@ -37,7 +37,7 @@ resources:
         - task_key: sample_task
           #job_cluster_key: Undefined here to use serverless by default for dev
           notebook_task:
-            notebook_path: ../setup_tables.sql
+            notebook_path: ../notebooks/setup_tables.sql
             base_parameters:
               ENV: ${var.env}
               USER: ${workspace.current_user.userName}
