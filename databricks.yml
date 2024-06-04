@@ -1,0 +1,27 @@
+bundle:
+  name: dabs-demo
+
+include:
+  - ./resources/*.yml
+
+variables:
+  experiment_name:
+    description: Demo DABs project
+    default: sample_dabs_experiments
+  env:
+    description: Environment for deployment
+    default: dev
+
+targets:
+  dev_env:
+    default: true
+    variables:
+      env: dev
+    workspace:
+      host: https://adb-984752964297111.11.azuredatabricks.net/
+
+  prod_env:
+    variables:
+      env: prod
+    workspace:
+      host: https://adb-984752964297111.11.azuredatabricks.net/
