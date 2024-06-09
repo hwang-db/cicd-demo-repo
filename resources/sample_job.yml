@@ -1,0 +1,70 @@
+# specify your desired cluster
+small_etl_cluster: &small_etl_cluster
+  new_cluster:
+    num_workers: 1
+    spark_version: 13.3.x-scala2.12
+    node_type_id: Standard_D4ds_v5 
+    driver_node_type_id: Standard_D4ds_v5
+    spark_env_vars: {
+        "K1": "V1",
+        "K2": "V2",
+        "SPARKPASSWORD": "{{secrets/scope1/key1}}"
+    }
+    init_scripts: [
+        {
+            "volumes": {
+                "destination": "/Volumes/hwang_demo/default/demo_volume/init.sh"
+            }
+        }
+    ]
+    
+medium_etl_cluster: &medium_etl_cluster
+  new_cluster:
+    num_workers: 2
+    spark_version: 13.3.x-scala2.12
+    node_type_id: Standard_D8ads_v5 
+    driver_node_type_id: Standard_D4ds_v5  
+
+    
+
+resources:
+  jobs:
+    sample_job:
+      name: ${var.env}_sample_job
+      job_clusters:
+        - job_cluster_key: small_etl_cluster
+          <<: *small_etl_cluster
+      tasks:       
+        - task_key: sample_task
+          job_cluster_key: small_etl_cluster
+          notebook_task:
+            notebook_path: ../notebooks/python_workload.py
+            base_parameters:
+              catalog: ${var.catalog}
+              schema: ${var.schema}
+              USER: ${workspace.current_user.userName}
+              
+    sample_job_2:
+      name: ${var.env}_sample_job_2
+      job_clusters:
+        - job_cluster_key: job_2_cluster # actual name of job cluster 
+          <<: *medium_etl_cluster
+      tasks:
+        - task_key: sample_task
+          job_cluster_key: job_2_cluster
+          notebook_task:
+            notebook_path: ../notebooks/setup_tables.sql
+            base_parameters:
+              USER: ${workspace.current_user.userName}
+    
+    hwang_demo_dabs_auto:
+      name: hwang_demo_job_dabs_auto
+      tasks:
+        - task_key: demo_git_task
+          notebook_task:
+            notebook_path: notebooks/python_workload.py
+            source: GIT
+      git_source:
+        git_url: https://github.com/hwang-db/cicd-demo-repo.git
+        git_provider: gitHub
+        git_branch: feature1

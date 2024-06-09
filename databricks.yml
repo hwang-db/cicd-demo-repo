@@ -1,0 +1,59 @@
+bundle:
+  name: dabs-demo
+  #compute_id: ${var.my_interactive_cluster}
+  databricks_cli_version: "0.220.0"
+
+
+include:
+  - ./resources/*.yml
+
+
+# workspace: # override with a non-default location to store bundled artefacts, only 1 top-level workspace
+#   root_path: /Users/${workspace.current_user.userName}/.bundle/${bundle.name}/my-envs-playground/${bundle.target}
+#   artifact_path: /Users/${workspace.current_user.userName}/.bundle/${bundle.name}/my-envs-playground/${bundle.target}/artifacts
+#   file_path: /Users/${workspace.current_user.userName}/.bundle/${bundle.name}/my-envs-playground/${bundle.target}/files
+#   profile: DEFAULT
+#   auth_type: pat
+
+permissions:
+  - level: CAN_VIEW
+    group_name: hwang_test_group
+  - level: CAN_MANAGE
+    user_name: hao.wang@databricks.com
+
+variables:
+  experiment_name:
+    description: Demo DABs project
+    default: sample_dabs_experiments
+  env:
+    description: Environment for deployment
+    default: dev
+  catalog:
+    description: catalog to store tables
+    default: main
+  schema:
+    description: schema to store tables
+    default: hwang_dev
+  my_interactive_cluster:
+    default: 0521-011325-hnwsumy9
+
+targets:
+  dev_env:
+    default: true
+    mode: development
+    variables:
+      env: dev
+      catalog: main
+      schema: hwang_dev
+    workspace:
+      host: https://adb-984752964297111.11.azuredatabricks.net
+  prod_env:
+    run_as:
+      service_principal_name: 3cb93056-0ce2-47a0-8c28-56e81d46242a  
+    variables:
+      env: prod
+      catalog: main
+      schema: hwang_prod
+    workspace:
+      host: https://adb-984752964297111.11.azuredatabricks.net
+
