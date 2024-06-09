@@ -48,8 +48,6 @@ targets:
     workspace:
       host: https://adb-984752964297111.11.azuredatabricks.net
   prod_env:
-    run_as:
-      service_principal_name: 3cb93056-0ce2-47a0-8c28-56e81d46242a  
     variables:
       env: prod
       catalog: main
